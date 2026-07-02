@@ -27,7 +27,7 @@ Every subagent you spawn starts with empty context. Inject what it needs into it
    Done when you know whether you are resuming an existing run (take the latest run-id → step 6) or starting a new one (→ step 2).
 
 2. **Negotiate the contract.**
-   Take the user's goal. Spawn a **planner** to draft `contract.md` (a checklist of testable assertions, aim 10–30) into a scratch path, then an **evaluator** in plan mode to critique it, then the planner once more to revise — one round, then present. Agree the per-run limits with the user (`max_iterations`, `no_progress_rounds`, `contract_invalid_rounds`, forbidden operations) and record them in the contract's `## Limits`. When presenting the contract, point out that model tiers (`## Models`) are off by default and can be turned on to control cost; if the user wants that, record the per-role tiers.
+   Take the user's goal. Spawn a **planner** to draft `contract.md` (a checklist of testable assertions, aim 10–30) into a scratch path, then an **evaluator** in plan mode to critique it, then the planner once more to revise — one round, then present. Agree the per-run limits with the user (`max_iterations`, `no_progress_rounds`, `contract_invalid_rounds`, forbidden operations) and record them in the contract's `## Limits`. When presenting the contract, point out that model tiers (`## Models`) are off by default and can be turned on to control cost; if the user wants that, record the per-role tiers. Also ask what report presentation they want — default is markdown-only `report.md`, optionally HTML with charts — and record it in `## Report`.
    Done when the evaluator's plan-mode critique is addressed and the user explicitly approves `contract.md`.
 
 3. **Create the run directory.**

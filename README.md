@@ -37,7 +37,7 @@ The only thing written into the target repo is a run directory:
 
 ```text
 .easy-loop/runs/<run-id>/
-  spec.md  contract.md  state.json  log.jsonl  report.md  report.html (optional)
+  spec.md  contract.md  state.json  log.jsonl  report.md  report.html (only if you choose it)
   iterations/<NNNN>/{snapshot/, plan.md, patch.diff, eval.json}
 ```
 

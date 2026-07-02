@@ -120,7 +120,7 @@ The single canonical list. `SKILL.md` and `guideline.md` point here; the runner 
 
 ## Reporting
 
-`report.md` is canonical and the runner is its sole writer (on escalation and on completion); the evaluator supplies findings via `iterations/<NNNN>/eval.json`. If `report.md` carries meaningful numeric evidence (score trends, pass/fail rates, timing), render an optional `report.html` with charts (simple SVG/Canvas/HTML) rather than raw tables alone.
+`report.md` is the canonical record and the runner is its sole writer (on escalation and on completion); the evaluator supplies findings via `iterations/<NNNN>/eval.json`. Any additional presentation is the user's choice, agreed during negotiation and recorded in the contract's `## Report` (default: markdown only). If the user opts for a richer presentation — e.g. `report.html` with charts (simple SVG/Canvas/HTML) for numeric evidence like score trends or pass/fail rates — the runner produces it in the chosen format alongside `report.md`.
 
 ## Platform Grounding
 

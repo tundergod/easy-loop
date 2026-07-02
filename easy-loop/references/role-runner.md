@@ -16,7 +16,7 @@ Follow `references/loop-protocol.md` for the state schema, the write invariant, 
 
 Stop and hand back to the manager on the escalation triggers in `references/loop-protocol.md`. The counter limits (`no_progress_rounds`, `contract_invalid_rounds`, `max_iterations`) come from the contract's `## Limits` — read them, never assume a value.
 
-When escalating, write the pending finding to `report.md`, set `status: awaiting_approval` and `needs_approval: true`, and return a summary as your final message. On a `PASS`, set `status: done` and write the completion `report.md`. On an unrecoverable error you cannot escalate for approval, set `status: failed` and return. You are the sole writer of `report.md`.
+When escalating, write the pending finding to `report.md`, set `status: awaiting_approval` and `needs_approval: true`, and return a summary as your final message. On a `PASS`, set `status: done` and write the completion `report.md`. On an unrecoverable error you cannot escalate for approval, set `status: failed` and return. You are the sole writer of `report.md`; also produce any additional presentation named in the contract's `## Report` (e.g. HTML with charts) alongside it.
 
 ## Do Not
 

@@ -48,6 +48,9 @@ Forbidden operations:
 ## Models
 Tiered model selection: off | on   (default off — subagents inherit the session model)
 When on — planner: {{TIER}}  generator: {{TIER}}  evaluator: strong  runner: fast
+
+## Report
+Presentation: markdown only (default) | + HTML with charts | other ({{DESCRIBE}})
 ```
 
 ## Do Not
