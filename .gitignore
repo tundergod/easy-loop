@@ -1,2 +1,5 @@
 # easy-loop run directories (machine state)
 .easy-loop/
+
+# harness / local state
+.claude/
