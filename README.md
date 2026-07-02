@@ -6,7 +6,7 @@ Invoking `/easy-loop` turns the main session into a **manager**: it negotiates a
 
 ## Install
 
-`easy-loop` is a skill for Claude Code / Codex. Install it with the Skills CLI:
+Install it with the Skills CLI:
 
 ```bash
 npx skills add tundergod/easy-loop@easy-loop -g -y   # -g user-level, -y no prompts
