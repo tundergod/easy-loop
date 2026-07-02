@@ -54,6 +54,16 @@ The role instructions describe *concepts* rather than skill names, which keeps t
 
 They fire by description-match, so installing the skill is enough — no configuration. Draw from any skill set you like — for example, Matt Pocock's at <https://github.com/mattpocock/skills>.
 
+## Model Tiers (cost control)
+
+Model tiers are **off by default** — every subagent inherits your session model, so behaviour is unchanged until you opt in. Turn them on during contract negotiation to spend less: the loop then assigns each role a capability *tier* rather than a fixed model name, keeping the policy portable across platforms.
+
+- `strong` — quality-critical work (the evaluator — the quality gate; never cheap).
+- `balanced` — the workhorse (the generator, which runs every iteration and drives most of the cost).
+- `fast` — light routing and file work (the runner).
+
+The manager resolves each tier to whatever the current platform offers. On Claude Code, for example: `strong`→Opus, `balanced`→Sonnet, `fast`→Haiku. Per-subagent reasoning effort is not controllable and always inherits the session.
+
 ## Repository Layout
 
 ```text
