@@ -1,4 +1,4 @@
-# Easy Loop
+# A Simple Loop Workflow
 
 `easy-loop` is a skill that **runs** a Karpathy-style planner/generator/evaluator loop in a repository.
 

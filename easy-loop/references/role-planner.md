@@ -41,8 +41,8 @@ Forbidden operations:
   Verification: {{COMMAND_OR_ARTIFACT_CHECK}}
 
 ## Limits (defaults shown; override during negotiation — canonical in loop-protocol.md)
-- Max iterations: 15
-- No-progress rounds before escalating: 3
+- Max iterations: 3
+- No-progress rounds before escalating: 2
 - Contract-invalid rounds before escalating: 2
 - Budget (manager-side advisory ceiling): none
 
