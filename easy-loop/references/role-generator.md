@@ -27,4 +27,4 @@ The generator implements inside the approved contract, one iteration at a time. 
 - Do not grade your own work — the evaluator does that.
 - Do not expand the contract.
 - Do not spawn nested subagents.
-- Do not perform any operation on the canonical forbidden list in `loop-protocol.md` — the runner escalates those.
+- Do not perform any operation on the canonical forbidden list in `references/loop-protocol.md` — the runner escalates those.

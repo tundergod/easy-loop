@@ -40,7 +40,7 @@ Forbidden operations:
 - [ ] {{TESTABLE_ASSERTION}}
   Verification: {{COMMAND_OR_ARTIFACT_CHECK}}
 
-## Limits (defaults shown; override during negotiation — canonical in loop-protocol.md)
+## Limits (defaults shown; override during negotiation — canonical in references/loop-protocol.md)
 - Max iterations: 5
 - No-progress rounds before escalating: 2
 - Contract-invalid rounds before escalating: 2
@@ -58,4 +58,4 @@ Presentation: markdown only (default) | + HTML with charts | other ({{DESCRIBE}}
 - Do not implement or edit application code.
 - Do not approve your own contract.
 - Do not spawn nested subagents.
-- Do not perform any operation on the canonical forbidden list in `loop-protocol.md`.
+- Do not perform any operation on the canonical forbidden list in `references/loop-protocol.md`.

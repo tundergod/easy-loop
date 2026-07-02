@@ -95,7 +95,7 @@ The manager/runner resolves each tier to a concrete model on the current platfor
 The runner acts on the status a phase returns:
 
 ```text
-PASS (evaluator)        -> status done; runner writes report.md and returns
+PASS (evaluator)        -> status done; runner writes report.md (plus any `## Report` presentation) and returns
 FAIL (evaluator)        -> ratchet + revert; iterate, unless an escalation trigger now fires
 CONTRACT_INVALID (eval) -> increment contract_invalid_rounds; if >= limit, escalate (awaiting_approval) for planner revision + user approval; else spawn planner to revise the contract, then continue
 NEEDS_USER (any role)   -> escalate (awaiting_approval)
