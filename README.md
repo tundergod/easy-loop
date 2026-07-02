@@ -37,8 +37,8 @@ The only thing written into the target repo is a run directory:
 
 ```text
 .easy-loop/runs/<run-id>/
-  spec.md  contract.md  state.json  log.jsonl  report.md
-  iterations/<NNNN>/{plan.md,patch.diff,eval.json}
+  spec.md  contract.md  state.json  log.jsonl  report.md  report.html (optional)
+  iterations/<NNNN>/{snapshot/, plan.md, patch.diff, eval.json}
 ```
 
 Shared discipline and role instructions stay in the skill and are injected into each subagent's prompt at run time, so `easy-loop` must be installed to run a loop.

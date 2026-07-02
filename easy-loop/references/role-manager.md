@@ -1,4 +1,4 @@
-# Loop-Manager Role
+# Manager Role
 
 The manager is the main user-facing session. It owns everything that needs a human; it never writes application code and never grades work.
 

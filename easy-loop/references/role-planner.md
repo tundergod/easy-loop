@@ -41,21 +41,13 @@ Forbidden operations:
   Verification: {{COMMAND_OR_ARTIFACT_CHECK}}
 
 ## Limits (defaults shown; override during negotiation — canonical in loop-protocol.md)
-- Max iterations: 3
+- Max iterations: 5
 - No-progress rounds before escalating: 2
 - Contract-invalid rounds before escalating: 2
-- Budget (manager-side advisory ceiling): none
 
 ## Models
 Tiered model selection: off | on   (default off — subagents inherit the session model)
 When on — planner: {{TIER}}  generator: {{TIER}}  evaluator: strong  runner: fast
-
-## Stop And Restart
-- Stop when {{STOP_CONDITION}}.
-- Restart when {{RESTART_CONDITION}}.
-
-## Git Baseline
-Branch / HEAD / dirty-baseline-approved: {{...}}
 ```
 
 ## Do Not

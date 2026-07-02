@@ -1,4 +1,4 @@
-# Loop-Runner Role
+# Runner Role
 
 The runner is a background subagent that drives the loop. It runs hands-off: it never talks to the user and stops only to escalate or when the contract is met. `loops.md` is the philosophy behind how it behaves — separate the roles, write to disk, let the loop restart, read the traces.
 

@@ -41,7 +41,7 @@ Every subagent you spawn starts with empty context. Inject what it needs into it
 5. **Route the runner's outcome.**
    On the completion notification, read `state.json` and act on `status`:
    - `done` → report success (contract met).
-   - `awaiting_approval` → surface the pending finding/operation from `report.md`, get a decision, record it, then **relaunch (step 4)** with the updated contract or approval. Not done until relaunched or the user ends the run.
+   - `awaiting_approval` → surface the pending finding/operation from `report.md`, get a decision, record it, then **relaunch (step 4)** with the updated contract or approval. If the escalation is a contract-revision request (`CONTRACT_INVALID`), re-run step 2's planner → approval first. Not done until relaunched or the user ends the run.
    - `failed` → report the blocker and ask how to proceed.
    Done when the user has the outcome and the run is either relaunched or explicitly ended.
 
