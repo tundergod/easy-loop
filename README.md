@@ -56,7 +56,9 @@ They fire by description-match, so installing the skill is enough — no configu
 
 ## Model Tiers (cost control)
 
-Model tiers are **off by default** — every subagent inherits your session model, so behaviour is unchanged until you opt in. Turn them on during contract negotiation to spend less: the loop then assigns each role a capability *tier* rather than a fixed model name, keeping the policy portable across platforms.
+Model tiers are **off by default** — every subagent inherits your session model, so behaviour is unchanged until you opt in. The loop then assigns each role a capability *tier* rather than a fixed model name, keeping the policy portable across platforms.
+
+**How to turn them on:** there is no separate flag — it lives in the contract. The contract the manager shows you for approval has a `## Models` section set to `off`. Before you approve, just tell the manager to enable it — e.g. *"turn on model tiers"* or *"use a cheaper model for the generator, keep the evaluator strong"* — and approve the revised contract.
 
 - `strong` — quality-critical work (the evaluator — the quality gate; never cheap).
 - `balanced` — the workhorse (the generator, which runs every iteration and drives most of the cost).

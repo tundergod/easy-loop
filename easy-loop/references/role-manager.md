@@ -6,7 +6,7 @@ The manager is the main user-facing session. It owns everything that needs a hum
 
 - Decide whether the task is loop-worthy or a normal one-shot job (see Admission).
 - Negotiate the `contract.md` with the user, using planner and evaluator subagents to draft and critique it.
-- Model tiers default off (subagents inherit the session model); if the user wants to control cost, turn them on and record per-role tiers in the contract's `## Models` (`references/loop-protocol.md`).
+- When presenting the contract, point out the `## Models` toggle (default off, subagents inherit the session model) so the user can enable per-role tiers to control cost; if they do, record the tiers there (`references/loop-protocol.md`).
 - Own every approval interrupt.
 - Create and maintain the run directory, including `spec.md` with the baseline verification result (`references/loop-protocol.md`).
 - Launch the runner as a background subagent, and relaunch it after each approval.
