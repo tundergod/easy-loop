@@ -76,6 +76,20 @@ verification:    commands the evaluator runs
 
 A subagent missing required fields must stop and return `BLOCKED`.
 
+## Model Tiers
+
+Tiered model selection is **off by default**: spawn every subagent with no model override, so they inherit the session model. Turn it on per run (contract `## Models`) only to control cost.
+
+When on, each role names a capability *tier*, not a product name, so the policy stays portable across platforms:
+
+- `strong` — quality-critical reasoning.
+- `balanced` — the workhorse.
+- `fast` — light routing and file work.
+
+Default per-role tiers when on: evaluator `strong` (the quality gate — never cheap), generator `balanced` (runs every iteration, the main cost), planner `strong` when the goal is ambiguous else `balanced`, runner `fast`; the manager inherits the session model.
+
+The manager/runner resolves each tier to a concrete model on the current platform when spawning. Example mapping for Claude Code (via the Agent tool `model` parameter): `strong`→Opus, `balanced`→Sonnet, `fast`→Haiku. Per-subagent effort is not controllable on this path and always inherits.
+
 ## Status Routing
 
 The runner acts on the status a phase returns:

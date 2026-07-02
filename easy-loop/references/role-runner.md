@@ -7,7 +7,7 @@ The runner is a background subagent that drives the loop. It runs hands-off: it 
 Each iteration:
 
 1. Create `iterations/<NNNN>/` and copy the contract's allowed-path files into `iterations/<NNNN>/snapshot/` (the revert substrate).
-2. Spawn a fresh subagent per phase — planner (only when the contract needs revision), generator, then evaluator — injecting `guideline.md`, the matching `references/role-*.md`, and the run-directory paths into each prompt.
+2. Spawn a fresh subagent per phase — planner (only when the contract needs revision), generator, then evaluator — injecting `guideline.md`, the matching `references/role-*.md`, and the run-directory paths into each prompt. Set each subagent's model per the contract's `## Models` (off by default → no override, so it inherits the session model); see `references/loop-protocol.md`.
 3. Apply the **ratchet** and update the counters exactly as defined in `references/loop-protocol.md` (keep if `score > best_score`, else revert from `snapshot/`; update `no_progress_rounds`).
 
 Follow `references/loop-protocol.md` for the state schema, the write invariant, status routing, and resume — do not restate its rules here.

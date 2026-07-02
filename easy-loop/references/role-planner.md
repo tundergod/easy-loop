@@ -46,6 +46,10 @@ Forbidden operations:
 - Contract-invalid rounds before escalating: {{N_CONTRACT_INVALID}}
 - Budget (manager-side advisory ceiling): {{BUDGET}}
 
+## Models
+Tiered model selection: off | on   (default off — subagents inherit the session model)
+When on — planner: {{TIER}}  generator: {{TIER}}  evaluator: strong  runner: fast
+
 ## Stop And Restart
 - Stop when {{STOP_CONDITION}}.
 - Restart when {{RESTART_CONDITION}}.
