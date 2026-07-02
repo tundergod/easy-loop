@@ -40,11 +40,11 @@ Forbidden operations:
 - [ ] {{TESTABLE_ASSERTION}}
   Verification: {{COMMAND_OR_ARTIFACT_CHECK}}
 
-## Limits
-- Max iterations: {{N}}
-- No-progress rounds before escalating: {{N_NO_PROGRESS}}
-- Contract-invalid rounds before escalating: {{N_CONTRACT_INVALID}}
-- Budget (manager-side advisory ceiling): {{BUDGET}}
+## Limits (defaults shown; override during negotiation — canonical in loop-protocol.md)
+- Max iterations: 15
+- No-progress rounds before escalating: 3
+- Contract-invalid rounds before escalating: 2
+- Budget (manager-side advisory ceiling): none
 
 ## Models
 Tiered model selection: off | on   (default off — subagents inherit the session model)

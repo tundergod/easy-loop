@@ -105,7 +105,7 @@ unrecoverable error     -> status failed; return to manager
 
 ## Escalation Triggers
 
-The runner stops for a human (sets `awaiting_approval`) only on: `contract_invalid_rounds` ≥ the contract's limit; a contract-forbidden or approval-gated operation is needed; `no_progress_rounds` ≥ the contract's limit; or `iteration` reaches `max_iterations`. Completion is a `PASS`. The counters and `max_iterations` come from the contract's `## Limits` (see `role-planner.md`); token budget is a manager-side advisory ceiling, not a runner auto-trigger, because the runner cannot observe token spend.
+The runner stops for a human (sets `awaiting_approval`) only on: `contract_invalid_rounds` ≥ the contract's limit; a contract-forbidden or approval-gated operation is needed; `no_progress_rounds` ≥ the contract's limit; or `iteration` reaches `max_iterations`. Completion is a `PASS`. The counters and `max_iterations` come from the contract's `## Limits` (see `role-planner.md`). Default limits, used unless the user overrides them during negotiation: `max_iterations` **15**, `no_progress_rounds` **3**, `contract_invalid_rounds` **2**. Token budget is a manager-side advisory ceiling with no default (the runner cannot observe token spend, so it is never an auto-trigger).
 
 ## Forbidden And Approval-Gated Operations
 
