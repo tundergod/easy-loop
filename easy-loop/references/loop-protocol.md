@@ -30,7 +30,7 @@ Use a sortable `<run-id>` (a timestamp/ULID) so "latest" needs no separate point
 ```json
 {
   "run_id": "",
-  "status": "running | awaiting_approval | done | failed",
+  "status": "running | awaiting_approval | done | failed | cancelled",
   "iteration": 1,
   "phase": "plan | generate | evaluate",
   "best_score": -1,
@@ -53,7 +53,7 @@ Use a sortable `<run-id>` (a timestamp/ULID) so "latest" needs no separate point
 
 The runner sets `kind` from the cause: a forbidden/approval-gated operation → `forbidden_operation`; work needs paths or API changes outside the contract's scope → `scope_expansion`; counter limits → `no_progress`, `iteration_limit`, or `contract_invalid`; a worker's `NEEDS_USER`/`BLOCKED` → `needs_user`/`blocked`. If several causes fire at once, use the first in this list and name the rest in `summary`.
 
-`best_score` starts at `-1` so a legitimate first score of `0` can still be kept. `log.jsonl` is the append-only audit trail; one object per line:
+`cancelled` is set only by the manager on user request; cancelled runs are never resumed, and a runner that reads it stops immediately without writing. `best_score` starts at `-1` so a legitimate first score of `0` can still be kept. `log.jsonl` is the append-only audit trail; one object per line:
 
 ```json
 {"iter": 1, "phase": "evaluate", "actor": "evaluator", "result": "FAIL exit1", "score": 0}

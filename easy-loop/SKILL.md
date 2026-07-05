@@ -1,8 +1,9 @@
 ---
 name: easy-loop
-description: Run or resume an autonomous build/fix loop that iterates plan → implement → evaluate against a user-approved, testable contract until it passes. Use when the user wants an agent loop, wants a task to keep iterating unattended or in the background (e.g. overnight), or wants to resume an interrupted or crashed run.
+description: Run or resume an autonomous build/fix loop that iterates plan → implement → evaluate against a user-approved, testable contract until it passes. Use when the user wants an agent loop, wants a task to keep iterating unattended or in the background (e.g. overnight), or wants to resume, check the status of, or cancel a run.
 license: MIT
 compatibility: Detached runs require a host that can spawn background subagents; without one, only direct work or a foreground pass is possible.
+argument-hint: "[goal] | status | cancel"
 ---
 
 # Easy Loop
@@ -28,9 +29,10 @@ Every subagent starts with empty context. Resolve `skill_path` — this skill's 
    A detached run also requires a background-capable subagent mechanism on this host (tool names vary — use the host's native delegation mechanism). If none exists, never fake a resilient run: offer direct work or a foreground compatibility pass instead.
    Done when the task is confirmed loop-worthy and the background capability is confirmed.
 
-2. **Detect resume vs new.**
-   Scan `.easy-loop/runs/*/state.json` (rooted at the repo root) for `status: running` or `awaiting_approval`.
-   Done when you know whether you are resuming (latest run-id → step 7) or starting new (→ step 3).
+2. **Detect intent and existing runs.**
+   If the invocation carried an argument, act on it first: a goal phrase seeds step 3; `status` → read the latest run's `state.json` and `report.md`, summarize (run-id, status, iteration, best score, any pending approval), and stop; `cancel` → confirm with the user, set the latest in-progress run's `status: cancelled`, and stop.
+   Otherwise scan `.easy-loop/runs/*/state.json` (rooted at the repo root) for `status: running` or `awaiting_approval`.
+   Done when the subcommand is served, or you know whether you are resuming (latest run-id → step 7) or starting new (→ step 3).
 
 3. **Negotiate the contract.**
    Spawn a **planner** to draft `contract.md` (10–30 testable assertions) at `.easy-loop/drafts/contract-<timestamp>.md`, then an **evaluator** in plan mode to critique it, then the planner once more to revise — one round, then present to the user. Cover when presenting: the scope (allowed paths broad enough to achieve the goal — fixing tests may mean touching source), the verification commands/artifacts, the per-run limits, the `## Models` cost toggle (off by default — mention it can be turned on to control cost), and the `## Report` presentation (markdown default, optionally HTML with charts).

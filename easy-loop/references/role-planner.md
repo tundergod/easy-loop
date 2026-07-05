@@ -63,6 +63,11 @@ When on — planner: {{TIER}}  generator: {{TIER}}  evaluator: strong  runner: f
 Presentation: markdown only (default) | + HTML with charts | other ({{DESCRIBE}})
 ```
 
+An acceptance item is testable, not aspirational:
+
+- Good: `- [ ] Running the suite 20× in isolation yields 0 failures in tests/parser.test.js — Verification: for i in $(seq 20); do npm test -- tests/parser.test.js || exit 1; done`
+- Bad: `- [ ] the parser tests are reliable` (no command can decide it)
+
 ## Do Not
 
 - Do not implement or edit application code.

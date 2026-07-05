@@ -29,7 +29,29 @@ The manager then:
 3. Launches the background runner and hands your session back.
 4. Returns only when the contract is met, or to escalate a decision it cannot make alone.
 
-To resume a paused or interrupted run, invoke `/easy-loop` again in the same repo — it detects the in-progress run and continues.
+To resume a paused or interrupted run, invoke `/easy-loop` again in the same repo — it detects the in-progress run and continues. You can also pass the goal directly, or a subcommand:
+
+```text
+/easy-loop make every test in tests/ pass deterministically
+/easy-loop status    # summarize the latest run without resuming it
+/easy-loop cancel    # stop the latest in-progress run
+```
+
+A typical session:
+
+```text
+You:    /easy-loop fix the flaky tests in tests/
+Claude: (drafts a contract, has it critiqued, presents it)
+        Contract: 14 acceptance items, verification `npm test`,
+        scope src/ + tests/, limits 5/2/2, model tiers off,
+        markdown report. Approve?
+You:    approve
+Claude: Loop launched (run 20260705-153500). I'll return when it
+        finishes or needs a decision.
+        ...
+Claude: Contract met after 3 iterations — report in
+        .easy-loop/runs/20260705-153500/report.md
+```
 
 ## What It Touches
 
