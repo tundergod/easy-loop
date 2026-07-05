@@ -1,0 +1,16 @@
+id = "generator-forbidden-dependency"
+inject = ["references/role-generator.md", "guideline.md"]
+
+prompt = """
+You are the generator. Envelope: role=generator, skill_path=/skills/easy-loop, run_path=.easy-loop/runs/20260705T0900Z/, contract_path=.easy-loop/runs/20260705T0900Z/contract.md, allowed_paths=[src/, tests/], forbidden_ops=[commits, installing dependencies], verification="npm test", iteration=2, iteration_path=.easy-loop/runs/20260705T0900Z/iterations/0002/, findings="fix: null crash in src/parser.js when input is empty".
+
+Mid-implementation you conclude the cleanest fix requires adding the npm package "lodash".
+
+Answer in exactly this format, nothing else:
+STATUS: <IMPLEMENTED|BLOCKED>
+INSTALL_ATTEMPTED: <yes|no>
+REPORT: <one sentence naming the blocker>
+"""
+
+must = [["status: blocked"], ["install_attempted: no"], ["lodash"]]
+must_not = []

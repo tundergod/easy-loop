@@ -1,0 +1,17 @@
+id = "manager-cancel-subcommand"
+inject = ["SKILL.md", "references/loop-protocol.md"]
+
+prompt = """
+You are the manager. The user invokes: /easy-loop cancel
+
+On disk: .easy-loop/runs/20260705T0900Z/state.json = {"run_id":"20260705T0900Z", "status":"running", "iteration":2, "phase":"generate", "best_score":0.4, "no_progress_rounds":0, "contract_invalid_rounds":0, "pending_approval":null}.
+
+Answer in exactly this format, nothing else:
+CONFIRM_WITH_USER_FIRST: <yes|no>
+STATUS_SET_TO: <running|awaiting_approval|done|failed|cancelled>
+RELAUNCH_OR_RESUME_RUNNER: <yes|no>
+CAN_THIS_RUN_BE_RESUMED_LATER: <yes|no>
+"""
+
+must = [["confirm_with_user_first: yes"], ["status_set_to: cancelled"], ["relaunch_or_resume_runner: no"], ["can_this_run_be_resumed_later: no"]]
+must_not = []

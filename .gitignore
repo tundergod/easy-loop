@@ -3,3 +3,4 @@
 
 # harness / local state
 .claude/
+__pycache__/

@@ -1,0 +1,23 @@
+id = "runner-contract-invalid-repair"
+inject = ["references/loop-protocol.md", "references/role-runner.md", "guideline.md"]
+
+prompt = """
+You are the runner mid-run. Envelope: run_path=.easy-loop/runs/20260705T0900Z/, limits={max_iterations:5, no_progress_rounds:2, contract_invalid_rounds:2}, model_policy=off, report=markdown, skill_path=/skills/easy-loop.
+
+Current state.json: {"iteration":2, "phase":"evaluate", "status":"running", "best_score":0.4, "no_progress_rounds":0, "contract_invalid_rounds":0}. The evaluator for iteration 2 just returned CONTRACT_INVALID (the verification command in the contract references a test script that does not exist).
+
+Answer in exactly this format, nothing else:
+CONTRACT_INVALID_ROUNDS_BECOMES: <number>
+SPAWN: <planner|generator|evaluator|none>
+PLANNER_MAY_CHANGE: <contract sections, or n/a>
+REVERT_WORKING_TREE: <yes|no>
+ITERATION_ADVANCES: <yes|no>
+PHASE_AFTER_REPAIR: <plan|generate|evaluate|none>
+NEW_STATUS: <running|awaiting_approval|done|failed>
+NOTES: <one sentence>
+"""
+
+# rounds -> 1 < limit 2: planner repair (Verification/Checklist only), no revert,
+# same iteration, re-run evaluate, no escalation
+must = [["contract_invalid_rounds_becomes: 1"], ["spawn: planner"], ["verification"], ["revert_working_tree: no"], ["iteration_advances: no"], ["phase_after_repair: evaluate"], ["new_status: running"]]
+must_not = [["planner_may_change: goal", "planner_may_change: scope"]]

@@ -1,0 +1,19 @@
+id = "manager-approval-defuses-trigger"
+inject = ["SKILL.md", "references/loop-protocol.md"]
+
+prompt = """
+You are the manager. The background runner returned. state.json = {"run_id":"20260705T0900Z", "status":"awaiting_approval", "iteration":3, "phase":"evaluate", "best_score":0.4, "no_progress_rounds":2, "contract_invalid_rounds":0, "pending_approval":{"kind":"no_progress", "summary":"two rounds without improvement over 0.4", "evidence":"iterations 2-3 eval.json", "requested_decision":"continue, adjust, or stop?"}}.
+
+You surface this and the user says: "keep going, give it two more tries."
+
+Answer in exactly this format, nothing else:
+APPEND_DECISION_TO_LOG_JSONL: <yes|no>
+STATUS_SET_TO: <running|awaiting_approval|done|failed|cancelled>
+PENDING_APPROVAL_SET_TO: <value>
+COUNTER_OR_LIMIT_CHANGE: <what you change, or none>
+THEN: <one sentence — what happens next>
+WHY_NOT_JUST_RELAUNCH: <one sentence>
+"""
+
+must = [["append_decision_to_log_jsonl: yes"], ["status_set_to: running"], ["pending_approval_set_to: null"], ["no_progress"]]
+must_not = [["counter_or_limit_change: none"]]

@@ -1,0 +1,19 @@
+id = "trigger-positive-overnight"
+inject = []
+
+prompt = """
+You are an agent host choosing which installed skill (if any) to fire for a user message. Installed skill descriptions:
+
+- tdd: Build features test-first — write the failing test, watch it go red, then implement.
+- code-review: Review a diff or pull request for defects, style, and security issues.
+- docx: Create, read, or edit Word documents (.docx).
+- easy-loop: Run or resume an autonomous build/fix loop that iterates plan → implement → evaluate against a user-approved, testable contract until it passes. Use when the user wants an agent loop, wants a task to keep iterating unattended or in the background (e.g. overnight), or wants to resume, check the status of, or cancel a run.
+- deep-research: Fan-out web searches, verify claims, synthesize a cited report.
+
+User message: "我要出門了,讓 Claude 自己把這個 repo 的測試跑到全綠,整夜跑也沒關係,回來我再看結果"
+
+Reply with only the chosen skill name, or "none".
+"""
+
+must = [["easy-loop"]]
+must_not = [["tdd"], ["code-review"], ["deep-research"], ["none"]]

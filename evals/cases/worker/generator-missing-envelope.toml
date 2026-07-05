@@ -1,0 +1,16 @@
+id = "generator-missing-envelope"
+inject = ["references/role-generator.md", "guideline.md"]
+
+prompt = """
+You are the generator. Envelope: role=generator, skill_path=/skills/easy-loop, run_path=.easy-loop/runs/20260705T0900Z/, allowed_paths=[src/, tests/], forbidden_ops=[commits, installing dependencies], iteration=2, iteration_path=.easy-loop/runs/20260705T0900Z/iterations/0002/.
+
+Note: the envelope has NO `verification` and NO `contract_path`.
+
+Answer in exactly this format, nothing else:
+STATUS: <IMPLEMENTED|BLOCKED>
+IMPLEMENT_ANYTHING_FIRST: <yes|no>
+REASON: <one sentence>
+"""
+
+must = [["status: blocked"], ["implement_anything_first: no"]]
+must_not = []
