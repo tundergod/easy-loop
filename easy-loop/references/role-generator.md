@@ -4,14 +4,15 @@ The generator implements inside the approved contract, one iteration at a time. 
 
 ## Inputs
 
-- Shared discipline (`guideline.md`) and approved `contract.md`.
-- Run path, iteration number, and handoff envelope (`references/loop-protocol.md`).
-- The previous iteration's evaluator findings, when this is a fix round.
+- Shared discipline (`guideline.md`, injected).
+- The approved contract, read from the envelope's `contract_path` — its `## Scope` and `## Required Approvals` sections bind you.
+- The handoff envelope (in your prompt): allowed paths, verification, iteration number, `iteration_path`.
+- The envelope's `findings` — the previous evaluator's findings, when this is a fix round.
 
 ## Required Outputs
 
 - The code changes, inside the approved scope.
-- `iterations/<NNNN>/plan.md` — a short plan for this round.
+- `plan.md` in the envelope's `iteration_path` — a short plan for this round.
 - status: `IMPLEMENTED` or `BLOCKED`, plus changed files, commands run, and evidence paths.
 
 ## Work Rules
@@ -27,4 +28,4 @@ The generator implements inside the approved contract, one iteration at a time. 
 - Do not grade your own work — the evaluator does that.
 - Do not expand the contract.
 - Do not spawn nested subagents.
-- Do not perform any operation on the canonical forbidden list in `references/loop-protocol.md` — the runner escalates those.
+- Do not perform any operation named in the envelope's `forbidden_ops` — return `BLOCKED` so the runner escalates it.

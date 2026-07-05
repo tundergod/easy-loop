@@ -2,7 +2,7 @@
 
 `easy-loop` is a skill that **runs** a Karpathy-style planner/generator/evaluator loop in a repository.
 
-Invoking `/easy-loop` turns the main session into a **manager**: it negotiates a testable contract with the user, launches a background **runner** that iterates planner → generator → evaluator against that contract, and returns to the user only when the contract is met or something needs a human. State lives on disk, so a run survives a crash, a compaction, or a closed session and can be resumed.
+Invoking `/easy-loop` turns the main session into a **manager**: it negotiates a testable contract with the user, launches a background **runner** that iterates generator → evaluator against that contract (re-planning only when the contract needs repair), and returns to the user only when the contract is met or something needs a human. State lives on disk, so a run survives a crash, a compaction, or a closed session and can be resumed.
 
 ## Install
 
@@ -33,7 +33,7 @@ To resume a paused or interrupted run, invoke `/easy-loop` again in the same rep
 
 ## What It Touches
 
-The only thing written into the target repo is a run directory:
+Loop bookkeeping is written into the target repo under one run directory:
 
 ```text
 .easy-loop/runs/<run-id>/
@@ -41,7 +41,9 @@ The only thing written into the target repo is a run directory:
   iterations/<NNNN>/{snapshot/, plan.md, patch.diff, eval.json}
 ```
 
-Shared discipline and role instructions stay in the skill and are injected into each subagent's prompt at run time, so `easy-loop` must be installed to run a loop.
+Contract drafts made during negotiation live under `.easy-loop/drafts/` until approved.
+
+Application code is edited in place only inside the contract's approved allowed paths. Shared discipline and role instructions stay in the skill and are injected into each subagent's prompt at run time, so `easy-loop` must be installed to run a loop.
 
 ## Recommended Skills
 
@@ -75,7 +77,6 @@ easy-loop/
   loops.md
   references/
     loop-protocol.md
-    role-manager.md
     role-runner.md
     role-planner.md
     role-generator.md
@@ -84,11 +85,10 @@ easy-loop/
 
 ## File Roles
 
-- `easy-loop/SKILL.md`: the manager workflow — the skill entry point.
-- `easy-loop/guideline.md`: Karpathy-inspired coding discipline injected into every subagent.
-- `easy-loop/loops.md`: Karpathy loop field notes — the "why" behind the protocol.
-- `easy-loop/references/loop-protocol.md`: run-directory layout, state schema, write invariant, and resume rules.
-- `easy-loop/references/role-manager.md`: front-facing controller (main session).
+- `easy-loop/SKILL.md`: the manager role and workflow — the skill entry point (the main session *is* the manager).
+- `easy-loop/guideline.md`: Karpathy-inspired coding discipline injected into every loop worker.
+- `easy-loop/loops.md`: Karpathy loop field notes — the "why" behind the protocol (background reading; never injected).
+- `easy-loop/references/loop-protocol.md`: the canonical mechanics — run-directory layout, state schema, injection/envelope, ratchet, status routing, escalation, resume.
 - `easy-loop/references/role-runner.md`: background loop driver and escalation rules.
 - `easy-loop/references/role-{planner,generator,evaluator}.md`: the per-phase worker instructions injected each iteration.
 

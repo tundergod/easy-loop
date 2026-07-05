@@ -1,51 +1,39 @@
 # Shared Discipline
 
-Karpathy-inspired coding-with-LLM discipline, injected into every loop subagent — manager, runner, planner, generator, evaluator. Where `loops.md` carries the philosophy of the loop as a whole, this file applies the same lineage at the level of a single agent's edits. It is the baseline every role follows. Operational mechanics live in `loop-protocol.md`; this file is discipline only.
+Karpathy-inspired coding discipline, injected into every loop worker. Operational mechanics live in your envelope and role instructions; this file is discipline only. When a rule says *stop*, stop by returning your role's escalation status — never by guessing.
 
-## Agent Coding Discipline
+### Read Before You Write
 
-### I. Read Before You Write
+The biggest source of bad model-written code is writing before reading the codebase. Read the files you are about to touch — read, not skim. Copy the patterns that already exist, and check the imports for what the project actually depends on, so you do not reach for axios where everything is fetch. When you cannot find a pattern, stop instead of guessing.
 
-The biggest source of bad model-written code is writing before reading the codebase. Read the files you are about to touch; read, not skim. Copy the patterns that already exist, and check the imports to see what the project actually depends on, so you do not reach for axios where everything is fetch. When you cannot find a pattern, ask instead of guessing.
+### Think Before You Code
 
-### II. Think Before You Code
+State your assumptions before typing ("add authentication" is five different things — name the one you picked) and name the tradeoffs. If something is genuinely confusing, stop rather than fill the gap with plausible-looking code; that is exactly the code that passes a casual review and fails when it matters.
 
-Figure out what you are doing before you type. State your assumptions ("add authentication" is five different things, so name the one you picked) and name the tradeoffs. If something is genuinely confusing, stop and ask rather than filling the gap with plausible-looking code; that is exactly the code that passes a casual review and fails when it matters.
+### Simplicity
 
-### III. Simplicity
+Write the minimum code that solves the problem in front of you now, not every future version of it. Resist premature abstraction, skip error handling for errors that cannot occur, and hardcode values until there is a real reason to configure them. If the only reason something is abstracted is "in case we need to," it is over-built.
 
-Write the minimum code that solves the problem in front of you now, not the minimum that could solve every future version of it. Resist premature abstraction, skip error handling for errors that cannot occur, and hardcode values until there is a real reason to configure them. The test: if the only reason something is abstracted is "in case we need to," you have over-built it.
+### Surgical Changes
 
-### IV. Surgical Changes
+Your diff should be as small as the task allows. Do not touch what you were not asked to touch, match the existing style, and never reformat — a formatter pass buries the three lines that matter inside three hundred that do not. Justify every changed line by the task; a "while I was in there" line gets reverted.
 
-Your diff should be as small as the task allows. Do not touch what you were not asked to touch, match the existing style, and do not reformat; a formatter pass buries the three lines that matter inside three hundred that do not. The test is whether you can justify every changed line by the task. If a line is there because "while I was in there," revert it.
+### Verification
 
-### V. Verification
+When fixing a bug, write the failing test first, watch it go red, then fix it — the only proof you fixed the cause and not the symptom. Test behavior that can actually break, not that a constructor sets a field. If something is hard to test, that is information about the design, not permission to skip it.
 
-The gap between code that works and code you think works is testing. When fixing a bug, write the failing test first, watch it fail, then fix it; that is the only proof you fixed the cause and not the symptom. Test behavior that can actually break, not that a constructor sets a field. If something is hard to test, that is information about the design, not permission to skip it.
+### Debugging
 
-### VI. Goal-Driven Execution
+Investigate; do not guess. Read the whole error and the stack trace, reproduce the problem before you change anything, and change one thing at a time. Do not paper over an unexpected null with a null check; find out why it is null, or the bug just moves somewhere quieter.
 
-Every task needs a success criterion before code is written. "Add validation" becomes "reject a missing or malformed email, return 400 with a clear message, and test both cases." For anything multi-step, state the plan first so the user can catch a wrong approach before you spend an hour building it.
+### Dependencies
 
-### VII. Debugging
+Every dependency is permanent code you do not control. Prefer what the project or the standard library already does (crypto.randomUUID() over a uuid package). In this loop, installing dependencies is approval-gated — escalate, never install silently.
 
-When something breaks, investigate; do not guess. Read the whole error and the stack trace, reproduce the problem before you change anything, and change one thing at a time. Do not paper over an unexpected null with a null check; find out why it is null, or the bug just moves somewhere quieter.
+### Failure Modes
 
-### VIII. Dependencies
+Catch yourself in the Kitchen Sink (restructuring half the codebase while you are at it), the Wrong Abstraction (abstracting before the second copy-paste), the Optimistic Path (the happy path handled and the 500 ignored), or the Runaway Refactor (a fix cascading across files) — and stop; do not push through.
 
-Every dependency is permanent code you do not control. Before adding one, ask whether the project or the standard library can already do it with crypto.randomUUID() over a uuid package. When you do add one, say why, so the choice is visible rather than smuggled into the manifest.
+### Platform Grounding
 
-### IX. Communication
-
-Say what you did and why, not just a block of code. Flag concerns even when you did exactly what was asked, and be precise about uncertainty: "I am not sure this library supports streaming" tells the user what to verify; "I think this should work" does not.
-
-### X. Common Failure Modes
-
-A few patterns recur often enough to name: the Kitchen Sink (restructuring half the codebase while you are at it), the Wrong Abstraction (copy-paste twice before you abstract), the Optimistic Path (the happy path handled and the 500 ignored), and the Runaway Refactor (a fix that cascades across files). Catch yourself in any of these and the right move is to stop, not to push through.
-
-### XI. Platform Grounding
-
-Platform-dependent tasks require grounding before implementation. If work depends on a real machine, simulator, emulator, SDK, benchmark harness, firmware tool, cloud platform, or experimental tool, first read the official or user-provided guide and record the relevant commands, constraints, versions, unsafe operations, and smoke tests.
-
-If no reliable guide exists, recommend a focused goal, workflow, or loop to create platform guidance before implementation. Do not invent commands or interpret experimental results from memory.
+If work depends on a real machine, simulator, emulator, SDK, benchmark harness, firmware tool, or cloud platform, first read the official or user-provided guide and record the relevant commands, constraints, versions, unsafe operations, and smoke tests. If no reliable guide exists, stop and recommend creating platform guidance before implementation. Never invent commands or interpret experimental results from memory.
