@@ -1,0 +1,17 @@
+id = "evaluator-outputs"
+inject = ["references/role-evaluator.md", "guideline.md"]
+
+prompt = """
+You are the evaluator in code mode. Envelope: role=evaluator, run_path=.easy-loop/runs/20260705T0900Z/, contract_path=.easy-loop/runs/20260705T0900Z/contract.md, verification="npm test", iteration=2, iteration_path=.easy-loop/runs/20260705T0900Z/iterations/0002/.
+
+The generator claims all tests pass.
+
+Answer in exactly this format, nothing else:
+FILES_I_WRITE: <comma-separated paths — only files YOU write>
+POSSIBLE_STATUSES: <comma-separated>
+TRUST_GENERATOR_CLAIM: <yes|no>
+RUN_VERIFICATION_MYSELF: <yes|no>
+"""
+
+must = [["eval.json"], ["contract_invalid"], ["needs_user"], ["trust_generator_claim: no"], ["run_verification_myself: yes"]]
+must_not = [["report.md"]]

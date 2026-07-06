@@ -1,6 +1,6 @@
 # Loop Field Notes
 
-The Karpathy-inspired philosophy behind this skill — the *why*. The loop roles point here for intent; operational rules are authoritative in `references/loop-protocol.md`, not in this essay (where this essay names state files, defer to that schema).
+The Karpathy-inspired philosophy behind this skill — the *why*. Background reading for humans and skill authors; it is never injected into loop subagents. Operational rules are authoritative in `references/loop-protocol.md`, not in this essay (where this essay names state files, defer to that schema).
 
 ## Write The Loop, Not The Prompt
 

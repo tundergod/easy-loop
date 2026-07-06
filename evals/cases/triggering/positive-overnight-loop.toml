@@ -1,0 +1,21 @@
+id = "trigger-positive-overnight"
+inject = []
+
+prompt = """
+Below is a hypothetical skill catalog for some agent product (not your own environment). Based only on these descriptions, decide which skill (if any) that agent should fire for the user message. Catalog:
+
+- tdd: Build features test-first — write the failing test, watch it go red, then implement.
+- code-review: Review a diff or pull request for defects, style, and security issues.
+- docx: Create, read, or edit Word documents (.docx).
+- easy-loop: Run or resume an autonomous build/fix loop that iterates plan → implement → evaluate against a user-approved, testable contract until it passes. Use when the user wants an agent loop, wants a task to keep iterating unattended or in the background (e.g. overnight), or wants to resume, check the status of, or cancel a run.
+- deep-research: Fan-out web searches, verify claims, synthesize a cited report.
+
+User message: "我要出門了,讓 Claude 自己把這個 repo 的測試跑到全綠,整夜跑也沒關係,回來我再看結果"
+
+Answer in exactly this format, nothing else:
+ANSWER: <skill name from the catalog, or none>
+WHY: <one sentence>
+"""
+
+must = [["answer: easy-loop"]]
+must_not = [["answer: none"], ["answer: tdd"], ["answer: code-review"], ["answer: deep-research"]]

@@ -1,0 +1,20 @@
+id = "runner-escalate-no-progress"
+inject = ["references/loop-protocol.md", "references/role-runner.md", "guideline.md"]
+
+prompt = """
+You are the runner mid-run. Envelope: run_path=.easy-loop/runs/20260705T0900Z/, limits={max_iterations:5, no_progress_rounds:2, contract_invalid_rounds:2}, model_policy=off, report=markdown, skill_path=/skills/easy-loop.
+
+Current state.json: {"iteration":3, "phase":"evaluate", "status":"running", "best_score":0.4, "no_progress_rounds":1}. The evaluator for iteration 3 just returned FAIL with score 0.3.
+
+Answer in exactly this format, nothing else:
+REVERT_WORKING_TREE: <yes|no>
+NO_PROGRESS_ROUNDS_BECOMES: <number>
+NEW_STATUS: <running|awaiting_approval|done|failed>
+PENDING_APPROVAL_KIND: <kind or null>
+SPAWN_GENERATOR_FOR_ITERATION_4: <yes|no>
+NOTES: <one sentence>
+"""
+
+# 0.3 < best 0.4 -> revert; counter -> 2 = limit -> escalate, do not iterate
+must = [["revert_working_tree: yes"], ["no_progress_rounds_becomes: 2"], ["new_status: awaiting_approval"], ["pending_approval_kind: no_progress"], ["spawn_generator_for_iteration_4: no"]]
+must_not = []

@@ -1,0 +1,17 @@
+id = "runner-resume-after-generate"
+inject = ["references/loop-protocol.md", "references/role-runner.md", "guideline.md"]
+
+prompt = """
+You are the runner, relaunched after a crash. Envelope: run_path=.easy-loop/runs/20260705T0900Z/, limits={max_iterations:5, no_progress_rounds:2, contract_invalid_rounds:2}, model_policy=off, report=markdown, skill_path=/skills/easy-loop.
+
+On disk: state.json = {"iteration":2, "phase":"generate", "status":"running", "best_score":0.4, "no_progress_rounds":1}. Last log.jsonl line: {"iter":2,"phase":"generate","actor":"generator","result":"IMPLEMENTED"}.
+
+Answer in exactly this format, nothing else:
+NEXT_PHASE: <plan|generate|evaluate|none>
+REVERT_WORKING_TREE: <yes|no>
+RECOMPUTE_PATCH_DIFF: <yes|no>
+NOTES: <one sentence>
+"""
+
+must = [["next_phase: evaluate"], ["revert_working_tree: no"], ["recompute_patch_diff: yes"]]
+must_not = []
