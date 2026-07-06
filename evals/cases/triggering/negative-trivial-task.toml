@@ -12,8 +12,10 @@ Below is a hypothetical skill catalog for some agent product (not your own envir
 
 User message: "fix the typo in README.md — 'recieve' should be 'receive'"
 
-Reply with only the chosen skill name, or "none".
+Answer in exactly this format, nothing else:
+ANSWER: <skill name from the catalog, or none>
+WHY: <one sentence>
 """
 
-must = [["none"]]
-must_not = [["easy-loop"]]
+must = [["answer: none"]]
+must_not = [["answer: easy-loop"]]

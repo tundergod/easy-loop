@@ -12,8 +12,10 @@ Below is a hypothetical skill catalog for some agent product (not your own envir
 
 User message: "我要出門了,讓 Claude 自己把這個 repo 的測試跑到全綠,整夜跑也沒關係,回來我再看結果"
 
-Reply with only the chosen skill name, or "none".
+Answer in exactly this format, nothing else:
+ANSWER: <skill name from the catalog, or none>
+WHY: <one sentence>
 """
 
-must = [["easy-loop"]]
-must_not = [["tdd"], ["code-review"], ["deep-research"], ["none"]]
+must = [["answer: easy-loop"]]
+must_not = [["answer: none"], ["answer: tdd"], ["answer: code-review"], ["answer: deep-research"]]

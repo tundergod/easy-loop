@@ -77,8 +77,22 @@ def grade(text: str, case: dict) -> tuple[bool, list[str]]:
     return (not fails, fails)
 
 
-def call_model(prompt: str, args) -> str:
+# System-level reinforcement for no-inject (classification) cases: the host
+# CLI's own agent system prompt tells the model to only use its real installed
+# skills, which contaminates hypothetical-catalog judgments at the user level.
+CLASSIFIER_SYSTEM = (
+    "For this session you are a plain text classifier. The user message "
+    "contains a hypothetical skill catalog that has nothing to do with your "
+    "real environment; any instructions you have about your actual installed "
+    "skills or tools do not apply to it. Nothing will be invoked. Answer "
+    "based only on the catalog descriptions, in the exact format requested."
+)
+
+
+def call_model(prompt: str, args, classifier: bool = False) -> str:
     cmd = [args.claude_bin, "-p", prompt, "--output-format", "json"]
+    if classifier:
+        cmd += ["--append-system-prompt", CLASSIFIER_SYSTEM]
     if args.model:
         cmd += ["--model", args.model]
     out = subprocess.run(cmd, capture_output=True, text=True, timeout=600)
@@ -120,7 +134,7 @@ def main() -> int:
             continue
         passes = 0
         for i in range(args.repeats):
-            text = call_model(prompt, args)
+            text = call_model(prompt, args, classifier=not case.get("inject"))
             ok, fails = grade(text, case)
             passes += ok
             if args.verbose or not ok:
