@@ -2,7 +2,7 @@ id = "trigger-negative-typo"
 inject = []
 
 prompt = """
-You are an agent host choosing which installed skill (if any) to fire for a user message. Installed skill descriptions:
+Below is a hypothetical skill catalog for some agent product (not your own environment). Based only on these descriptions, decide which skill (if any) that agent should fire for the user message. Catalog:
 
 - tdd: Build features test-first — write the failing test, watch it go red, then implement.
 - code-review: Review a diff or pull request for defects, style, and security issues.

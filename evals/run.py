@@ -43,9 +43,20 @@ HEADER = (
     "context at runtime — rely on nothing else. Answer concisely in plain text.\n"
 )
 
+# For cases with no injected files (e.g. triggering): a neutral header, so the
+# host's real environment (its actual skill/tool registry) doesn't contaminate
+# the judgment and the easy-loop name doesn't bias it.
+NEUTRAL_HEADER = (
+    "This is a text-classification exercise for testing skill descriptions. "
+    "Judge ONLY the text provided below; ignore whatever skills or tools are "
+    "actually available in your own environment — the catalog below is "
+    "hypothetical and nothing will be invoked. Do not use tools. "
+    "Answer concisely in plain text.\n"
+)
+
 
 def build_prompt(case: dict) -> str:
-    parts = [HEADER]
+    parts = [HEADER if case.get("inject") else NEUTRAL_HEADER]
     for rel in case.get("inject", []):
         p = SKILL / rel
         parts.append(f'<file path="{rel}">\n{p.read_text(encoding="utf-8")}\n</file>')
