@@ -9,7 +9,7 @@ Usage (requires the `claude` CLI and Python >= 3.11 for tomllib):
 
     python3 evals/run.py                    # all cases, 3 repeats each
     python3 evals/run.py --repeats 5 --model sonnet
-    python3 evals/run.py --only runner-*    # glob on case id
+    python3 evals/run.py --only 'runner-*'  # glob on case id (quote it for zsh)
     python3 evals/run.py --dry-run          # build + validate prompts, no calls
 
 A case passes a run when every `must` group matches (any-of, case-insensitive

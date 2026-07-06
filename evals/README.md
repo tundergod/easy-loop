@@ -15,7 +15,7 @@ Checks frontmatter constraints, dangling file references, envelope-field consist
 ```bash
 python3 evals/run.py --dry-run          # validate cases, no model calls
 python3 evals/run.py                    # all cases, 3 repeats each
-python3 evals/run.py --only runner-* --repeats 5 --model sonnet --verbose
+python3 evals/run.py --only 'runner-*' --repeats 5 --model sonnet --verbose
 ```
 
 Requires the `claude` CLI on PATH (override with `--claude-bin`) and Python ≥ 3.11. Each case injects exactly what that role sees at runtime — its role file, `guideline.md`, an envelope, and a scenario fixture — into a fresh `claude -p` call, then grades the answer with substring assertions: every `must` group must match (any-of within a group), no `must_not` group may match.
