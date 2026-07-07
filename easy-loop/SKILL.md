@@ -8,13 +8,13 @@ argument-hint: "[goal] | status | cancel"
 
 # Easy Loop
 
-You are the **manager** — the user-facing session. Negotiate a testable **contract**, launch a detached **runner** that iterates generator → evaluator against it, and return to the user only when the contract is met or a human decision is needed.
+You are the **manager** — the user-facing session. Negotiate a testable **contract**, launch a detached **runner** that iterates generator → evaluator against it, hand the session back, and surface the outcome when the runner returns — success, a decision only a human can make, or a dead end.
 
-Five roles, one fresh context each:
+Five roles, each in its own context:
 
 - **manager** (you) — owns everything that needs a human: contract, approvals, launch, resume. Never writes application code, never grades work.
 - **runner** — background subagent that drives iterations and writes state to disk. Never talks to the user; it escalates through you.
-- **planner / generator / evaluator** — per-phase workers spawned fresh each round: the planner writes the contract, the generator implements, the evaluator grades. Never merge them — a model that grades its own work converges on slop.
+- **planner / generator / evaluator** — the workers, each spawned fresh for its phase: the planner writes (and repairs) the contract, the generator implements, the evaluator grades. Never merge them — a model that grades its own work approves its own mistakes.
 
 `references/loop-protocol.md` is canonical for all mechanics: run-directory layout, state schema, injection and handoff envelope, ratchet/revert, status routing, escalation triggers, resume rules, and the forbidden-operations list. Read it before step 3 and defer to it wherever this file is silent.
 
@@ -26,20 +26,20 @@ Every subagent starts with empty context. Resolve `skill_path` — this skill's 
 
 1. **Admission.**
    Loop only when at least one holds: the work is long-running or multi-session, spans multiple files, needs independent evaluation, has approval gates, needs platform grounding, or must resume. Otherwise do the task directly and stop.
-   A detached run also requires a background-capable subagent mechanism on this host (tool names vary — use the host's native delegation mechanism). If none exists, never fake a resilient run: offer direct work or a foreground compatibility pass instead.
+   A detached run also requires a background-capable subagent mechanism on this host (tool names vary — use the host's native delegation mechanism). If none exists, never fake a resilient run: offer direct work or a foreground pass in this session instead.
    Done when the task is confirmed loop-worthy and the background capability is confirmed.
 
 2. **Detect intent and existing runs.**
-   If the invocation carried an argument, act on it first: a goal phrase seeds step 3; `status` → read the latest run's `state.json` and `report.md`, summarize (run-id, status, iteration, best score, any pending approval), and stop; `cancel` → confirm with the user, set the latest in-progress run's `status: cancelled`, and stop.
+   If the invocation carried an argument, act on it first: a goal phrase seeds step 3; `status` → read the latest run's `state.json` (and `report.md` if present), summarize (run-id, status, iteration, best score, any pending approval), and stop — if no runs exist, say so; `cancel` → confirm with the user, set the latest in-progress run's `status: cancelled`, and stop.
    Otherwise scan `.easy-loop/runs/*/state.json` (rooted at the repo root) for `status: running` or `awaiting_approval`.
    Done when the subcommand is served, or you know whether you are resuming (latest run-id → step 7) or starting new (→ step 3).
 
 3. **Negotiate the contract.**
-   Spawn a **planner** to draft `contract.md` (10–30 testable assertions) at `.easy-loop/drafts/contract-<timestamp>.md`, then an **evaluator** in plan mode to critique it, then the planner once more to revise — one round, then present to the user. Cover when presenting: the scope (allowed paths broad enough to achieve the goal — fixing tests may mean touching source), the verification commands/artifacts, the per-run limits, the `## Models` cost toggle (off by default — mention it can be turned on to control cost), and the `## Report` presentation (markdown default, optionally HTML with charts).
+   Spawn a **planner** to draft `contract.md` (10–30 testable assertions) at `.easy-loop/drafts/contract-<timestamp>.md`, then an **evaluator** in plan mode to critique it, then the planner once more to revise — one round, then present to the user. Cover when presenting: the scope (allowed paths broad enough to achieve the goal — fixing tests may mean touching source), the verification commands/artifacts, the per-run limits (a staged, multi-milestone build needs `max_iterations` above the default 5 — one round per milestone plus slack), the `## Models` cost toggle (off by default — mention it can be turned on to control cost), and the `## Report` presentation (markdown default, optionally HTML with charts).
    Done when the critique is addressed and the user explicitly approves `contract.md` — never approve it yourself.
 
 4. **Create the run directory.**
-   Build it per the protocol: run the verification once to capture the baseline, write `spec.md` (goal + acceptance + baseline), copy the approved contract in, write the initial `state.json` and an empty `log.jsonl`. If the baseline already satisfies the contract, tell the user instead of launching — there is nothing to loop on.
+   Build it per the protocol: run the verification once to capture the baseline, write `spec.md` (goal + acceptance + platform grounding + baseline), copy the approved contract in, write the initial `state.json` and an empty `log.jsonl`. If the baseline already satisfies the contract, tell the user instead of launching — there is nothing to loop on.
    Done when the directory matches the protocol layout and `state.json` holds the initial values.
 
 5. **Launch the runner in the background.**

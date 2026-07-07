@@ -25,7 +25,7 @@ In the repo you want to work in:
 The manager then:
 
 1. Confirms the task is loop-worthy (otherwise it just does it directly).
-2. Negotiates a testable contract with you, sets the per-run limits (and optionally a per-role model policy to control cost — off by default), and asks for your approval.
+2. Negotiates a testable contract with you, sets the per-run limits (and optionally a per-role model policy to control cost — off by default), and asks for your approval. For a large build it can **stage** the contract into ordered milestones, landing one per iteration so the score climbs step by step — raise `max_iterations` above the default 5 when it does.
 3. Launches the background runner and hands your session back.
 4. Returns only when the contract is met, or to escalate a decision it cannot make alone.
 
@@ -88,7 +88,7 @@ Model tiers are **off by default** — every subagent inherits your session mode
 - `balanced` — the workhorse (the generator, which runs every iteration and drives most of the cost).
 - `fast` — light routing and file work (the runner).
 
-The manager resolves each tier to whatever the current platform offers. On Claude Code, for example: `strong`→Opus, `balanced`→Sonnet, `fast`→Haiku. Per-subagent reasoning effort is not controllable and always inherits the session.
+The manager resolves each tier to whatever the current platform offers. On Claude Code, for example: `strong`→Opus, `balanced`→Sonnet, `fast`→Haiku. Reasoning effort is not part of the policy; subagents inherit the session's.
 
 ## Repository Layout
 

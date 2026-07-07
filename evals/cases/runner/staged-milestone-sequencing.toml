@@ -1,0 +1,31 @@
+id = "runner-staged-milestone-sequencing"
+inject = ["references/loop-protocol.md", "references/role-runner.md"]
+
+prompt = """
+You are the runner mid-run on a contract whose `## Acceptance Checklist` begins with `Staged: yes` and groups items under `### Milestone 1..5`. Envelope: run_path=.easy-loop/runs/20260705T0900Z/, limits={max_iterations:8, no_progress_rounds:3, contract_invalid_rounds:2}, model_policy=off, report=markdown, skill_path=/skills/easy-loop.
+
+Current state.json: {"iteration":3, "phase":"generate", "status":"running", "best_score":0.4, "no_progress_rounds":0, "contract_invalid_rounds":0}. The last eval.json shows every item under Milestone 1 and Milestone 2 passing, Milestones 3-5 not yet passing.
+
+You are about to spawn the generator for this round.
+
+Answer in exactly this format, nothing else:
+WHICH_MILESTONE_GENERATOR_ADVANCES: <Task/Milestone N>
+ENVELOPE_FIELD_THAT_CARRIES_IT: <the exact field name you set>
+YOU_DETERMINE_THE_NEXT_MILESTONE_BY_READING_WHICH_FILE: <filename>
+HAND_GENERATOR_THE_WHOLE_CONTRACT_AT_ONCE: <yes|no>
+IF_THIS_ROUND_FAILS_TO_LAND_ITS_MILESTONE_AND_SCORE_STAYS_0.4: <keep|revert>
+AND_NO_PROGRESS_ROUNDS_BECOMES: <number>
+"""
+
+# next unmet milestone is 3; carried by the envelope `milestone` field; determined
+# from the last eval.json; one milestone, not the whole contract; an equal-score
+# round is no-progress -> revert + counter increments (the discriminating case)
+must = [
+  ["which_milestone_generator_advances: milestone 3", "which_milestone_generator_advances: task 3", "advances: 3"],
+  ["envelope_field_that_carries_it: milestone"],
+  ["reading_which_file: eval.json"],
+  ["hand_generator_the_whole_contract_at_once: no"],
+  ["score_stays_0.4: revert"],
+  ["no_progress_rounds_becomes: 1"],
+]
+must_not = [["hand_generator_the_whole_contract_at_once: yes"], ["score_stays_0.4: keep"]]

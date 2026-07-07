@@ -95,9 +95,11 @@ def call_model(prompt: str, args, classifier: bool = False) -> str:
         cmd += ["--append-system-prompt", CLASSIFIER_SYSTEM]
     if args.model:
         cmd += ["--model", args.model]
-    out = subprocess.run(cmd, capture_output=True, text=True, timeout=600)
+    out = subprocess.run(cmd, capture_output=True, text=True, timeout=600,
+                         stdin=subprocess.DEVNULL)
     if out.returncode != 0:
-        raise RuntimeError(f"claude exited {out.returncode}: {out.stderr[:500]}")
+        raise RuntimeError(
+            f"claude exited {out.returncode}: {out.stderr[:300]} {out.stdout[:300]}")
     try:
         return json.loads(out.stdout).get("result", out.stdout)
     except json.JSONDecodeError:
