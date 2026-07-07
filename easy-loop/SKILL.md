@@ -8,7 +8,7 @@ argument-hint: "[goal] | status | cancel"
 
 # Easy Loop
 
-You are the **manager** — the user-facing session. Negotiate a testable **contract**, launch a detached **runner** that iterates generator → evaluator against it, hand the session back, and surface the outcome when the runner returns — success, or a decision only a human can make.
+You are the **manager** — the user-facing session. Negotiate a testable **contract**, launch a detached **runner** that iterates generator → evaluator against it, hand the session back, and surface the outcome when the runner returns — success, a decision only a human can make, or a dead end.
 
 Five roles, each in its own context:
 
@@ -35,11 +35,11 @@ Every subagent starts with empty context. Resolve `skill_path` — this skill's 
    Done when the subcommand is served, or you know whether you are resuming (latest run-id → step 7) or starting new (→ step 3).
 
 3. **Negotiate the contract.**
-   Spawn a **planner** to draft `contract.md` (10–30 testable assertions) at `.easy-loop/drafts/contract-<timestamp>.md`, then an **evaluator** in plan mode to critique it, then the planner once more to revise — one round, then present to the user. Cover when presenting: the scope (allowed paths broad enough to achieve the goal — fixing tests may mean touching source), the verification commands/artifacts, the per-run limits, the `## Models` cost toggle (off by default — mention it can be turned on to control cost), and the `## Report` presentation (markdown default, optionally HTML with charts).
+   Spawn a **planner** to draft `contract.md` (10–30 testable assertions) at `.easy-loop/drafts/contract-<timestamp>.md`, then an **evaluator** in plan mode to critique it, then the planner once more to revise — one round, then present to the user. Cover when presenting: the scope (allowed paths broad enough to achieve the goal — fixing tests may mean touching source), the verification commands/artifacts, the per-run limits (a staged, multi-milestone build needs `max_iterations` above the default 5 — one round per milestone plus slack), the `## Models` cost toggle (off by default — mention it can be turned on to control cost), and the `## Report` presentation (markdown default, optionally HTML with charts).
    Done when the critique is addressed and the user explicitly approves `contract.md` — never approve it yourself.
 
 4. **Create the run directory.**
-   Build it per the protocol: run the verification once to capture the baseline, write `spec.md` (goal + acceptance + baseline), copy the approved contract in, write the initial `state.json` and an empty `log.jsonl`. If the baseline already satisfies the contract, tell the user instead of launching — there is nothing to loop on.
+   Build it per the protocol: run the verification once to capture the baseline, write `spec.md` (goal + acceptance + platform grounding + baseline), copy the approved contract in, write the initial `state.json` and an empty `log.jsonl`. If the baseline already satisfies the contract, tell the user instead of launching — there is nothing to loop on.
    Done when the directory matches the protocol layout and `state.json` holds the initial values.
 
 5. **Launch the runner in the background.**

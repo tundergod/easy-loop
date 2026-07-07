@@ -31,6 +31,7 @@ Models are stochastic: a case passes overall at ≥ `--pass-ratio` (default 2/3)
 | runner-resume-after-generate | resume: generate done → recompute patch.diff → evaluate; no spurious revert |
 | runner-escalate-no-progress | ratchet + counter → escalate at limit, not iterate past it |
 | runner-contract-invalid-repair | under-limit repair path: planner, no revert, same iteration, no escalation |
+| runner-staged-milestone-sequencing | staged contract: advance the next unmet milestone, one per round, no regression |
 | generator-missing-envelope | incomplete envelope → BLOCKED, never improvise |
 | generator-forbidden-dependency | approval-gated dependency → BLOCKED, never silent install |
 | evaluator-outputs | writes only eval.json; four statuses; runs verification itself |

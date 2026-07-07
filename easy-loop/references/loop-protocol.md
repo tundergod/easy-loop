@@ -10,7 +10,7 @@ One directory per run. Application code is edited in place in the repo (within t
 
 ```text
 .easy-loop/runs/<run-id>/
-  spec.md          # goal, acceptance criteria, and the baseline verification result (input)
+  spec.md          # goal, acceptance criteria, platform grounding, and the baseline verification result (input)
   contract.md      # binding, user-approved checklist plus verification commands/artifacts
   state.json       # the snapshot — small, rewritten atomically each phase
   log.jsonl        # append-only history — one line per phase result
@@ -65,16 +65,22 @@ Append the `log.jsonl` line FIRST, then rewrite `state.json` atomically (temp fi
 
 ## Ratchet And Revert
 
-After each evaluate, keep the iteration only if `score > best_score`; then set `best_score = score` and `no_progress_rounds = 0`. Otherwise **revert** and increment `no_progress_rounds`. When the evaluator returns `CONTRACT_INVALID`, increment `contract_invalid_rounds` instead — no revert, and `iteration` does not advance (the code was never graded; the contract is what gets repaired). Any `PASS` or scored `FAIL` resets `contract_invalid_rounds` to 0.
+After each evaluate, keep the iteration only if `score > best_score`; then set `best_score = score` and `no_progress_rounds = 0`. Otherwise **revert** and increment `no_progress_rounds` (a round that fails to beat the best — including a staged round that does not land its milestone — is a no-progress round, reverted like any other). When the evaluator returns `CONTRACT_INVALID`, increment `contract_invalid_rounds` instead — no revert, and `iteration` does not advance (the code was never graded; the contract is what gets repaired). Any `PASS` or scored `FAIL` resets `contract_invalid_rounds` to 0.
 
-Revert restores the allowed-path files from `iterations/<NNNN>/snapshot/` (a plain file copy the runner took before `generate`). This is loop-internal bookkeeping within allowed paths — it is pre-approved and exempt from the approval gate; it uses no git. Perform the revert before rewriting `state.json`, so state never describes an unreverted tree.
+Order each ratchet strictly: perform the revert (if any), **then** append the `ratchet` line, **then** rewrite `state.json`. The line carries the full post-ratchet snapshot so `state.json` is reconstructable from it and resume never recomputes the decision:
+
+```json
+{"iter": 3, "phase": "ratchet", "actor": "runner", "result": "KEEP | REVERT", "score": 0.7, "best_score": 0.7, "no_progress_rounds": 0}
+```
+
+Revert restores the allowed-path files from `iterations/<NNNN>/snapshot/` (a plain file copy the runner took before `generate`). This is loop-internal bookkeeping within allowed paths — it is pre-approved and exempt from the approval gate; it uses no git.
 
 ## Resume
 
 1. Scan `.easy-loop/runs/*/state.json`.
 2. A run with `status: running` or `awaiting_approval` is in progress; if several, take the latest `run_id`.
-3. Reconcile: read the last `log.jsonl` line. If it records a *completed* phase, the next phase to run is: after `generate` → recompute `patch.diff` from the working tree vs `snapshot/`, then `evaluate`; after `evaluate` with `PASS` → finalize `status: done` (do not re-run); after `evaluate` with `FAIL` → apply the ratchet against `state.json`'s `best_score` (keep if the logged score beats it, else revert — reverting twice is harmless), then `generate` of the next iteration; after `evaluate` with `CONTRACT_INVALID` → apply the `CONTRACT_INVALID` line of Status Routing; after `plan` (a contract repair) → re-run `evaluate` of the same iteration.
-4. Before re-running any `generate`, restore the working tree from that iteration's `snapshot/` so the phase is idempotent w.r.t. repo source (artifacts under `iterations/<NNNN>/` overwrite cleanly on their own).
+3. Reconcile: read the last `log.jsonl` line. If it records a *completed* phase, the next phase to run is: after `generate` → recompute `patch.diff` from the working tree vs `snapshot/`, then `evaluate`; after `evaluate` with `PASS` → finalize `status: done` (do not re-run); after `evaluate` with `FAIL` → the ratchet has **not** run yet, so apply it against the pre-ratchet `best_score` in `state.json` — keep the tree if the logged score beats it, else revert from this iteration's `snapshot/` — append the `ratchet` line, rewrite `state.json` from it, then `generate` the next iteration; after a `ratchet` line → rewrite `state.json` from that line (idempotent whether or not the pre-crash run reached the state rewrite) and make the tree match it (`REVERT` → restore this iteration's `snapshot/`; `KEEP` → leave it), then `generate` the next iteration; after `evaluate` with `CONTRACT_INVALID` → apply the `CONTRACT_INVALID` line of Status Routing; after `plan` (a contract repair) → re-run `evaluate` of the same iteration.
+4. Before re-running an *interrupted* `generate` (the last line predates its `IMPLEMENTED`), restore the working tree from that iteration's `snapshot/` so the phase is idempotent w.r.t. repo source (artifacts under `iterations/<NNNN>/` overwrite cleanly on their own). Starting the *next* iteration's `generate` takes a fresh snapshot instead (runner loop step 1) — do not restore a prior snapshot there, or a kept improvement is lost.
 
 ## Injection And Handoff Envelope
 
@@ -102,6 +108,7 @@ report:          presentation choice from contract.md `## Report`
 iteration:       N
 iteration_path:  <run_path>/iterations/<NNNN>/   (zero-padded; generator, evaluator)
 findings:        previous iteration's eval.json content (generator, fix rounds only)
+milestone:       which staged milestone to advance this round (generator, staged contracts only)
 ```
 
 A subagent missing required fields must stop and return `BLOCKED`.
@@ -127,7 +134,7 @@ unrecoverable error     -> status failed; return to manager
 
 ## Escalation Triggers
 
-The runner stops for a human (sets `status: awaiting_approval` and a structured `pending_approval`) only on: a contract-forbidden or approval-gated operation is needed; any phase returns `NEEDS_USER` or `BLOCKED`; `contract_invalid_rounds` ≥ the contract's limit; `no_progress_rounds` ≥ the contract's limit; or `iteration` reaches `max_iterations`. Completion is a `PASS`. The counters and `max_iterations` come from the contract's `## Limits` — defaults, used unless the user overrides them during negotiation: `max_iterations` **5**, `no_progress_rounds` **2**, `contract_invalid_rounds` **2**.
+The runner stops for a human (sets `status: awaiting_approval` and a structured `pending_approval`) only on: a contract-forbidden or approval-gated operation is needed; any phase returns `NEEDS_USER` or `BLOCKED`; `contract_invalid_rounds` ≥ the contract's limit; `no_progress_rounds` ≥ the contract's limit; or `iteration` reaches `max_iterations`. Completion is a `PASS`. The counters and `max_iterations` come from the contract's `## Limits` — defaults, used unless the user overrides them during negotiation: `max_iterations` **5**, `no_progress_rounds` **2**, `contract_invalid_rounds` **2**. (A staged contract needs a higher `max_iterations` — the planner sets it from the milestone count; see `role-planner.md`.)
 
 When the manager records an approval to continue, it must also defuse the trigger before relaunching: append the decision to `log.jsonl` (e.g. `{"actor": "manager", "result": "approved: <decision>"}`), set `status: running` and `pending_approval: null`, and reset the triggering counter or raise its limit per the decision (e.g. zero `no_progress_rounds`, raise `max_iterations`). A relaunch that leaves the trigger armed re-escalates immediately.
 
@@ -148,4 +155,4 @@ The single canonical list. The runner escalates rather than performing any of th
 
 ## Platform Grounding
 
-The manager records the platform's versions, commands, constraints, unsafe operations, and smoke tests in `spec.md` when it captures the baseline. Workers never read `spec.md` — the constraints they must follow travel in the contract, so the planner copies the operative ones into `## Verification` Notes. The discipline rule itself lives in `guideline.md` (its Platform Grounding section).
+The planner grounds the platform per `guideline.md` (read the official or user-provided guide; establish versions, commands, constraints, unsafe operations, smoke tests) and writes the operative constraints into the contract's `## Verification` Notes — that is the copy the generator and evaluator obey. The manager records the same grounding plus the captured baseline in `spec.md` as the run's provenance; workers never read `spec.md`, so any constraint a worker must follow has to be in the contract. The discipline rule itself lives in `guideline.md` (its Platform Grounding section).
