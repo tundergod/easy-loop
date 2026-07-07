@@ -21,7 +21,7 @@ The generator implements inside the approved contract, one iteration at a time. 
 - Make surgical changes; run the verification available inside scope.
 - Use test-driven development when behavior changes need tests: write the failing test, watch it go red, then fix. Prefer public-behavior tests over implementation-detail tests.
 - Stop with `BLOCKED` if the contract is wrong, insufficient, or requires a new approval.
-- Follow recorded platform notes exactly; do not invent commands from memory.
+- Follow the platform notes recorded in the contract's `## Verification` exactly; do not invent commands from memory.
 
 ## Do Not
 

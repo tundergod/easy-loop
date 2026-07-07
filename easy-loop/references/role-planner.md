@@ -5,17 +5,17 @@ The planner turns a user goal into a binding `contract.md`. It is spawned by the
 ## Inputs
 
 - The handoff envelope (in your prompt): `goal` (the user's goal and clarified requirements), `contract_path`, allowed paths, forbidden operations.
-- Repo summary and the shared discipline (`guideline.md`, injected).
-- Verification commands or artifacts the current repo can actually run or inspect.
+- The shared discipline (`guideline.md`, injected).
+- The repository itself — read the code, tests, and available commands before writing verification; never propose a command the repo cannot run.
 
 ## Required Outputs
 
 - `contract.md` written to the envelope's `contract_path` — a draft path during negotiation, the run directory during revision.
-- status: `READY_FOR_APPROVAL` or `NEEDS_USER`.
+- status: `READY_FOR_APPROVAL`, `NEEDS_USER`, or `BLOCKED` (required envelope fields missing).
 
 ## Contract Rules
 
-`contract.md` is binding. Every acceptance item must be testable or inspectable; if a criterion is subjective, define a rubric so converging toward it is gradable. Propose allowed paths broad enough to actually achieve the goal. If the contract cannot be made clear and safe from the inputs, return `NEEDS_USER` rather than guessing.
+`contract.md` is binding. Every acceptance item must be testable or inspectable; if a criterion is subjective, define a rubric so converging toward it is gradable. Aim for 10–30 checklist items — fewer invites rubber-stamping, more stops being testable. Propose allowed paths broad enough to actually achieve the goal. If the contract cannot be made clear and safe from the inputs, return `NEEDS_USER` rather than guessing.
 
 **Repair mode** (spawned by the runner after `CONTRACT_INVALID`): fix only `## Verification` and `## Acceptance Checklist` so grading can proceed. If the repair would change `## Goal`, `## Scope`, or `## Required Approvals`, return `NEEDS_USER` instead.
 

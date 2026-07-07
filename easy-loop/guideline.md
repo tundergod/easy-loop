@@ -1,6 +1,6 @@
 # Shared Discipline
 
-Karpathy-inspired coding discipline, injected into every loop worker. Operational mechanics live in your envelope and role instructions; this file is discipline only. When a rule says *stop*, stop by returning your role's escalation status — never by guessing.
+Karpathy-inspired coding discipline, injected into every loop worker (planner, generator, evaluator). Operational mechanics live in your envelope and role instructions; this file is discipline only. When a rule says *stop*, stop by returning your role's escalation status — never by guessing.
 
 ### Read Before You Write
 

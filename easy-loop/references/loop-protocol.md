@@ -17,7 +17,7 @@ One directory per run. Application code is edited in place in the repo (within t
   report.md        # canonical report; the runner is its sole writer
   report.html      # optional presentation with charts (see Reporting)
   iterations/<NNNN>/
-    snapshot/      # copy of allowed-path files, taken before generate (revert substrate)
+    snapshot/      # copy of allowed-path files, taken before generate (what revert restores)
     plan.md  patch.diff  eval.json
 ```
 
@@ -73,7 +73,7 @@ Revert restores the allowed-path files from `iterations/<NNNN>/snapshot/` (a pla
 
 1. Scan `.easy-loop/runs/*/state.json`.
 2. A run with `status: running` or `awaiting_approval` is in progress; if several, take the latest `run_id`.
-3. Reconcile: read the last `log.jsonl` line. If it records a *completed* phase, the next phase to run is: after `generate` → recompute `patch.diff` from the working tree vs `snapshot/`, then `evaluate`; after `evaluate` with `PASS` → finalize `status: done` (do not re-run); after `evaluate` with `FAIL` → revert, then `generate` of the next iteration; after `evaluate` with `CONTRACT_INVALID` → apply the `CONTRACT_INVALID` line of Status Routing; after `plan` (a contract repair) → re-run `evaluate` of the same iteration.
+3. Reconcile: read the last `log.jsonl` line. If it records a *completed* phase, the next phase to run is: after `generate` → recompute `patch.diff` from the working tree vs `snapshot/`, then `evaluate`; after `evaluate` with `PASS` → finalize `status: done` (do not re-run); after `evaluate` with `FAIL` → apply the ratchet against `state.json`'s `best_score` (keep if the logged score beats it, else revert — reverting twice is harmless), then `generate` of the next iteration; after `evaluate` with `CONTRACT_INVALID` → apply the `CONTRACT_INVALID` line of Status Routing; after `plan` (a contract repair) → re-run `evaluate` of the same iteration.
 4. Before re-running any `generate`, restore the working tree from that iteration's `snapshot/` so the phase is idempotent w.r.t. repo source (artifacts under `iterations/<NNNN>/` overwrite cleanly on their own).
 
 ## Injection And Handoff Envelope
@@ -82,7 +82,7 @@ Every subagent starts with empty context — never rely on shared history. Spawn
 
 | Role      | Inject the contents of                                  |
 |-----------|---------------------------------------------------------|
-| runner    | this file, `references/role-runner.md`, `guideline.md`  |
+| runner    | this file, `references/role-runner.md`                  |
 | planner   | `references/role-planner.md`, `guideline.md`            |
 | generator | `references/role-generator.md`, `guideline.md`          |
 | evaluator | `references/role-evaluator.md`, `guideline.md`          |
@@ -93,7 +93,8 @@ skill_path:      absolute path to this skill's directory
 goal:            the user's goal and clarified requirements (planner)
 run_path:        .easy-loop/runs/<run-id>/   (empty during contract negotiation)
 contract_path:   .../contract.md   (the draft path during negotiation)
-allowed_paths / forbidden_ops:   ...
+allowed_paths:   from contract.md `## Scope`
+forbidden_ops:   the protocol's forbidden list plus contract.md `## Scope` additions
 verification:    commands and artifacts from contract.md `## Verification`
 limits:          max_iterations, no_progress_rounds, contract_invalid_rounds
 model_policy:    off, or the per-role tier map from contract.md `## Models`
@@ -109,7 +110,7 @@ A subagent missing required fields must stop and return `BLOCKED`.
 
 Off by default: spawn every subagent with no model override so it inherits the session model. Turn tiers on per run (contract `## Models`) only to control cost. When on, each role names a capability *tier*, not a product name, so the policy stays portable: `strong` (quality-critical reasoning), `balanced` (the workhorse), `fast` (light routing and file work).
 
-Default per-role tiers when on: evaluator `strong` (the quality gate — never cheap), generator `balanced` (runs every iteration, the main cost), planner `strong` when the goal is ambiguous else `balanced`, runner `fast`; the manager inherits the session model. The manager/runner resolves each tier to a concrete model on the current platform when spawning (e.g. on Claude Code: `strong`→Opus, `balanced`→Sonnet, `fast`→Haiku). Per-subagent reasoning effort is not controllable and always inherits.
+Default per-role tiers when on: evaluator `strong` (the quality gate — never cheap), generator `balanced` (runs every iteration, the main cost), planner `strong` when the goal is ambiguous else `balanced`, runner `fast`; the manager inherits the session model. The manager/runner resolves each tier to a concrete model on the current platform when spawning (e.g. on Claude Code: `strong`→Opus, `balanced`→Sonnet, `fast`→Haiku). Reasoning effort is not part of the policy; subagents inherit the session's.
 
 ## Status Routing
 
@@ -120,7 +121,7 @@ PASS (evaluator)        -> status done, clear pending_approval; runner writes re
 FAIL (evaluator)        -> ratchet + revert; iterate, unless an escalation trigger now fires
 CONTRACT_INVALID (eval) -> increment contract_invalid_rounds; if >= limit, escalate (awaiting_approval) for planner revision + user approval; else spawn planner to repair the contract (Verification and Acceptance Checklist only — Goal, Scope, and Required Approvals unchanged; anything more returns NEEDS_USER), then re-run evaluate of the same iteration
 NEEDS_USER (any role)   -> escalate (awaiting_approval)
-BLOCKED (generator/planner) -> escalate (awaiting_approval)
+BLOCKED (any worker)    -> escalate (awaiting_approval)
 unrecoverable error     -> status failed; return to manager
 ```
 
@@ -147,4 +148,4 @@ The single canonical list. The runner escalates rather than performing any of th
 
 ## Platform Grounding
 
-Record the platform's versions, commands, constraints, unsafe operations, and smoke tests in `spec.md` before the generator starts. The discipline rule itself lives in `guideline.md` (its Platform Grounding section).
+The manager records the platform's versions, commands, constraints, unsafe operations, and smoke tests in `spec.md` when it captures the baseline. Workers never read `spec.md` — the constraints they must follow travel in the contract, so the planner copies the operative ones into `## Verification` Notes. The discipline rule itself lives in `guideline.md` (its Platform Grounding section).

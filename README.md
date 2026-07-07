@@ -88,7 +88,7 @@ Model tiers are **off by default** — every subagent inherits your session mode
 - `balanced` — the workhorse (the generator, which runs every iteration and drives most of the cost).
 - `fast` — light routing and file work (the runner).
 
-The manager resolves each tier to whatever the current platform offers. On Claude Code, for example: `strong`→Opus, `balanced`→Sonnet, `fast`→Haiku. Per-subagent reasoning effort is not controllable and always inherits the session.
+The manager resolves each tier to whatever the current platform offers. On Claude Code, for example: `strong`→Opus, `balanced`→Sonnet, `fast`→Haiku. Reasoning effort is not part of the policy; subagents inherit the session's.
 
 ## Repository Layout
 
